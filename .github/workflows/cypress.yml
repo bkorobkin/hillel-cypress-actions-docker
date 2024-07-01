@@ -3,21 +3,16 @@ name: Cypress Tests
 on: [push, pull_request]
 
 jobs:
-  cypress-tests:
+  build-and-test:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Pull Docker image
-        run: docker pull cypress/browsers:node-20.14.0-chrome-126.0.6478.114-1-ff-127.0.1-edge-126.0.2592.61-1
+      - name: Build Docker image
+        run: docker build -t my-cypress-tests .
 
-      - name: Run Cypress tests
-        run: |
-          docker run --rm \
-            -v ${{ github.workspace }}:/e2e \
-            -w /e2e \
-            cypress/browsers:node-20.14.0-chrome-126.0.6478.114-1-ff-127.0.1-edge-126.0.2592.61-1 \
-            npx cypress run
+      - name: Run tests in Docker container
+        run: docker run --rm my-cypress-tests
 
